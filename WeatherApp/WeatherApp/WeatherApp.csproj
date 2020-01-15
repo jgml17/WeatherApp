@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <RootNamespace>Core.WeatherApp</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AppCenter" Version="2.6.4" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="2.6.4" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="2.6.4" />
+    <PackageReference Include="Microsoft.AppCenter.Distribute" Version="2.6.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.1" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="1.2.0.223" />
+    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+    <PackageReference Include="Xamarin.Forms" Version="4.4.0.991477" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />  
+    <PackageReference Include="Xamarin.Forms.BehaviorValidationPack" Version="1.1.0" />  
+    <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />  
+    <PackageReference Include="ZXing.Net.Mobile.Forms" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\WeatherAppModels\WeatherAppModels.csproj" />
+    <ProjectReference Include="..\..\WeatherAppServices\WeatherAppServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\Popups\LoadingView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Popups\ToastMessageView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Popups\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

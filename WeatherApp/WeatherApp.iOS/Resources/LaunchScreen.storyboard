@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="X5k-f2-b5h">
+    <device id="retina4_7" orientation="portrait"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="gAE-YM-kbH">
+            <objects>
+                <viewController id="X5k-f2-b5h" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Y8P-hJ-Z43"/>
+                        <viewControllerLayoutGuide type="bottom" id="9ZL-r4-8FZ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yd7-JS-zBw" opaque="NO">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinX="YES" flexibleMaxY="YES" flexibleMinY="YES"/>
+                        <color key="backgroundColor" colorSpace="calibratedRGB" red="1" green="1" blue="1" alpha="1"/>
+                        <color key="tintColor" colorSpace="calibratedRGB" red="1" green="1" blue="1" alpha="1"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="1057" translatesAutoresizingMaskIntoConstraints="NO" image="overlay.png">
+                                <rect key="frame" x="0.0" y="-8" width="375" height="683"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="1293" translatesAutoresizingMaskIntoConstraints="NO" image="Icon-1024.png">
+                                <rect key="frame" x="93.5" y="254.5" width="188" height="158"/>
+                                <constraints>
+                                    <constraint id="2472" firstAttribute="height" constant="158"/>
+                                    <constraint id="2473" firstAttribute="width" constant="188"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weather App" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1334" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="101.5" y="420.5" width="172" height="29"/>
+                                <fontDescription key="fontDescription" name="Verdana" family="Verdana" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                                <color key="textColor" colorSpace="calibratedRGB" red="0" green="0" blue="0" alpha="1"/>
+                                <constraints>
+                                    <constraint id="2243" firstAttribute="height" constant="29"/>
+                                    <constraint id="2244" firstAttribute="width" constant="172"/>
+                                </constraints>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint id="1065" firstItem="1057" firstAttribute="topMargin" secondItem="Y8P-hJ-Z43" secondAttribute="bottom"/>
+                            <constraint id="1066" firstItem="9ZL-r4-8FZ" firstAttribute="top" secondItem="1057" secondAttribute="bottomMargin"/>
+                            <constraint id="1067" firstAttribute="trailing" secondItem="1057" secondAttribute="trailing"/>
+                            <constraint id="1068" firstItem="1057" firstAttribute="leading" secondItem="yd7-JS-zBw" secondAttribute="leading"/>
+                            <constraint id="1071" firstAttribute="centerX" secondItem="1057" secondAttribute="centerX"/>
+                            <constraint id="1297" firstItem="1293" firstAttribute="centerX" secondItem="1057" secondAttribute="centerX"/>
+                            <constraint id="1298" firstItem="1293" firstAttribute="centerY" secondItem="1057" secondAttribute="centerY"/>
+                            <constraint id="2245" firstItem="1334" firstAttribute="top" secondItem="1293" secondAttribute="bottom" constant="8"/>
+                            <constraint id="2248" firstItem="1334" firstAttribute="centerX" secondItem="1057" secondAttribute="centerX"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XAI-xm-WK6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="349" y="339"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="overlay.png" width="375" height="303"/>
+        <image name="Icon-1024.png" width="1024" height="1024"/>
+    </resources>
+</document>
