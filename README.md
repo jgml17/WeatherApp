@@ -1,5 +1,5 @@
-# WeatherApp
-Weather Application
+# Xamarin Forms WeatherApp
+Xamarin Forms Weather Application
 
 
 aplicativo em Xamarin Forms com seguintes caracteristicas:
