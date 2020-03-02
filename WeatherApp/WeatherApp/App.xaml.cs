@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using Core.WeatherApp.Views;
-using Core.Services.WeatherAppServices;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Microsoft.AppCenter;

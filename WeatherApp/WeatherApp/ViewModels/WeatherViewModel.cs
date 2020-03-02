@@ -1,7 +1,5 @@
 ﻿using Core.Models.WeatherAppModels;
 using Core.WeatherApp.Helpers;
-using Core.Services.WeatherAppServices.Base;
-using Core.Services.WeatherAppServices.Interfaces;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.Logging;
@@ -19,6 +17,8 @@ using Core.WeatherApp.Resources;
 using Xamarin.Essentials;
 using Core.WeatherApp.Model;
 using System.Text.Json;
+using Core.WeatherApp.Services.Weather;
+using Core.WeatherApp.Services.Navigation;
 
 namespace Core.WeatherApp.ViewModels
 {
@@ -124,11 +124,9 @@ namespace Core.WeatherApp.ViewModels
         /// <param name="eventosService"></param>
         /// <param name="httpClientFactory"></param>
         /// <param name="logger"></param>
-        public WeatherViewModel(IWeatherService weatherService, IHttpClientFactory httpClientFactory, ILogger<WeatherViewModel> logger) : base(httpClientFactory, logger)
+        public WeatherViewModel(IWeatherService weatherService, ILogger<WeatherViewModel> logger, INavigationService<WeatherViewModel> navigationService) : base(logger, navigationService)
         {
             _weatherService = weatherService;
-            _httpClientFactory = httpClientFactory;
-            _logger = logger;
 
             Title = "Selecionar Evento";
         }
@@ -148,115 +146,48 @@ namespace Core.WeatherApp.ViewModels
         public async Task LoadDailyWeather()
         {
             IsBusy = true;
-
-            // Starts Loading
-            OnViewActions.Invoke(ViewActions.Loading, AppResources.Loading);
-
-            BaseServiceResponse<WeatherModel> model = new BaseServiceResponse<WeatherModel>();
+            ShowLoading(AppResources.Loading);
 
             try
             {
-                CancellationTokenSource tokenSource = new CancellationTokenSource();
-
-
                 // Get GPS Location
                 var location = await Geolocation.GetLastKnownLocationAsync();
 
                 if (location != null)
                 {
-                    Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                    _logger.LogInformation($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 }
 
-                var task = _weatherService.GetLocalWeather(AppResources.ApiUri, AppResources.DarkSkyKey, location.Latitude.ToString().Replace(",","."), location.Longitude.ToString().Replace(",", "."), _httpClientFactory, tokenSource);
+                // Call Api service
+                var ret = await _weatherService.GetLocalWeather(location.Latitude.ToString().Replace(",", "."), location.Longitude.ToString().Replace(",", "."));
 
-                if (task == await Task.WhenAny(task, Task.Delay(TimeOut, tokenSource.Token)))
-                {
-                    model = await task;
+                // Fill Main Weather properties
+                TimeZone = ret.Timezone;
+                Icon = ret.Currently.IconFormatted;
+                Temperature = ret.Currently.Temperature.ToString("##");
+                Date = UnixDateTime.UnixTimeStampToDateTimeLong(ret.Currently.Time);
+                Summary = ret.Currently.Summary;
 
-                    if (model != null)
-                    {
-                        switch (model.StatusCodeResponse)
-                        {
-                            case HttpStatusCode.OK:
-                                // ok
+                //Transform an object to another using json
+                var dailyTransform = JsonSerializer.Deserialize<List<CustomDailyInfos>>(JsonSerializer.Serialize<List<DailyInfos>>(ret.Daily.Data));
 
-                                // Fill Main Weather properties
-                                TimeZone = model.Response.Timezone;
-                                Icon = model.Response.Currently.IconFormatted;
-                                Temperature = model.Response.Currently.Temperature.ToString("##");
-                                Date = UnixDateTime.UnixTimeStampToDateTimeLong(model.Response.Currently.Time);
-                                Summary = model.Response.Currently.Summary;
+                // Fill Info Panel with first item that is current day
+                OriginalDailyInfo = dailyTransform[0];
+                SetInfoPanel(OriginalDailyInfo);
 
-                                //Transform an object to another using json
-                                var dailyTransform = JsonSerializer.Deserialize<List<CustomDailyInfos>>(JsonSerializer.Serialize<List<DailyInfos>>(model.Response.Daily.Data));
+                // Fill Daily Infos without first element that is current day infos
+                dailyTransform.RemoveAt(0); // REmove first item = current
 
-                                // Fill Info Panel with first item that is current day
-                                OriginalDailyInfo = dailyTransform[0];
-                                SetInfoPanel(OriginalDailyInfo);
-
-                                // Fill Daily Infos without first element that is current day infos
-                                dailyTransform.RemoveAt(0); // REmove first item = current
-
-                                //DailyInfos
-                                DailyInfos = new ObservableCollection<CustomDailyInfos>(dailyTransform);
-
-                                _logger.LogInformation($"INFO ===> {model.StatusCodeResponse.ToString()} / {model.Messages.Message}");
-                                break;
-
-                            case HttpStatusCode.Unauthorized:
-                                // Call Login
-
-
-                                _logger.LogInformation($"INFO ===> {model.StatusCodeResponse.ToString()} / {model.Messages.Message}");
-                                break;
-
-                            case HttpStatusCode.InternalServerError:
-                                // EXCEPTION
-                                Crashes.TrackError(model.Messages.Exception, model.Messages.Properties);
-                                _logger.LogCritical($"EXCEPTION ===> {model.Messages.Properties} / {model.Messages.Message}");
-                                break;
-
-                            default:
-                                // ERRORS
-                                Analytics.TrackEvent(model.StatusCodeResponse.ToString(), model.Messages.Properties);
-                                _logger.LogError($"ERROR ===> {model.Messages.Properties} / {model.Messages.Message}");
-                                break;
-
-                        }
-                    }
-
-                    tokenSource.Cancel();
-
-                    IsBusy = false;
-                }
-                else
-                {
-                    // TIMEOUT
-                    var Properties = new Dictionary<string, string> { { "WeatherViewModel", "LoadDailyWeather" } };
-                    Analytics.TrackEvent("TIMEOUT", Properties);
-                    _logger.LogError($"ERROR ===> WeatherViewModel, LoadDailyWeather / TIMEOUT");
-
-                    tokenSource.Cancel();
-                    IsBusy = false;
-                }
+                //DailyInfos
+                DailyInfos = new ObservableCollection<CustomDailyInfos>(dailyTransform);
             }
             catch (Exception ex)
             {
-                var properties = new Dictionary<string, string> { { "WeatherViewModel", "LoadDailyWeather" } };
-                // Configure error response
-                model.StatusCodeResponse = HttpStatusCode.InternalServerError;
-                model.Messages.Properties = properties;
-                // Call AppCenter
-                Crashes.TrackError(ex, properties);
-                _logger.LogError($"ERROR ===> {properties} / {ex.Message}");
+                ErrorHandle(ex, "WeatherViewModel", "LoadDailyWeather");
             }
             finally
             {
                 IsBusy = false;
-                // Close Loading
-                OnViewActions.Invoke(ViewActions.Loading);
-                // Invoke Event 
-                //OnStartViewActions?.Invoke(ViewActions.ConfirmarPresenca, model.Response);
             }
 
         }

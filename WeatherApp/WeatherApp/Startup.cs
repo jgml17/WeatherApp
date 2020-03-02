@@ -8,13 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Xamarin.Essentials;
-using Core.Services.WeatherAppServices.Interfaces;
-using Core.Services.WeatherAppServices;
 using Core.Models.WeatherAppModels;
 using WeatherApp.ViewModels;
 using Core.WeatherApp.Views.Popups;
 using Core.WeatherApp.Views;
 using Core.WeatherApp.ViewModels;
+using Core.WeatherApp.Services.Weather;
+using Core.WeatherApp.Services.RequestProvider;
+using Core.WeatherApp.Services.Navigation;
 
 namespace Core.WeatherApp
 {
@@ -63,6 +64,8 @@ namespace Core.WeatherApp
 
             // Services
             services.AddTransient<IWeatherService, WeatherService>();
+            services.AddTransient<IRequestProvider, RequestProvider>();
+            services.AddTransient(typeof(INavigationService<>), typeof(NavigationService<>));
 
             // Pages
             services.AddTransient<WeatherView>();

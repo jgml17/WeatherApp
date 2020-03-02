@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WeatherAppModels\WeatherAppModels.csproj" />
-    <ProjectReference Include="..\WeatherAppServices\WeatherAppServices.csproj" />
+    <ProjectReference Include="..\WeatherApp\WeatherApp\WeatherApp.csproj" />
   </ItemGroup>
 
 </Project>
