@@ -31,8 +31,8 @@ namespace Core.WeatherApp.ViewModels
         #region Variables
 
         private IWeatherService _weatherService;
-        public delegate void onAction(ViewActions action, object response = null);
-        public event onAction OnViewActions;
+        public delegate void onAction(CustomDailyInfos info = null);
+        public event onAction OnFireAnimation;
 
         #endregion
 
@@ -131,6 +131,12 @@ namespace Core.WeatherApp.ViewModels
             Title = "Selecionar Evento";
         }
 
+        public override async Task InitializeAsync(object navigationData)
+        {
+            await LoadDailyWeather();
+            Timer();
+        }
+
         /// <summary>
         /// Creates a timer to call weather refresh
         /// </summary>
@@ -150,13 +156,14 @@ namespace Core.WeatherApp.ViewModels
 
             try
             {
-                // Get GPS Location
+                // Get GPS Location ===
                 var location = await Geolocation.GetLastKnownLocationAsync();
 
                 if (location != null)
-                {
                     _logger.LogInformation($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
-                }
+                else
+                    throw new Exception("LOCATION IS NULL");
+                // =====================
 
                 // Call Api service
                 var ret = await _weatherService.GetLocalWeather(location.Latitude.ToString().Replace(",", "."), location.Longitude.ToString().Replace(",", "."));
@@ -188,6 +195,7 @@ namespace Core.WeatherApp.ViewModels
             finally
             {
                 IsBusy = false;
+                HideLoading();
             }
 
         }
@@ -209,11 +217,22 @@ namespace Core.WeatherApp.ViewModels
         #region Commands
 
         /// <summary>
-        /// Active Command
+        /// Fire from ListView 
         /// </summary>
-        //public Command ActiveCommand => new Command(() =>
-        //{
-        //}, () => true);
+        public Command ItemTappedCommand => new Command<CustomDailyInfos>(Item =>
+        {
+            // View Update and Animate
+            OnFireAnimation.Invoke(Item);
+        });
+
+        /// <summary>
+        /// Fire from StackView
+        /// </summary>
+        public Command StackTappedCommand => new Command(() =>
+        {
+            // View Update and Animate
+            OnFireAnimation.Invoke(OriginalDailyInfo);
+        });
 
         #endregion
     }

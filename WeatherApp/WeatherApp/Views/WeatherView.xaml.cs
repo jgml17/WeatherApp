@@ -14,10 +14,9 @@ namespace Core.WeatherApp.Views
     /// <summary>
     /// View Class: Here we have the code only to belongs to view.
     /// </summary>
-    public partial class WeatherView : ContentPage, IBaseView
+    public partial class WeatherView : ContentPage
     {
         private WeatherViewModel _viewmodel;
-        private LoadingView _loadingView;
 
         /// <summary>
         /// Constructor with Dependency injection parameter
@@ -25,71 +24,15 @@ namespace Core.WeatherApp.Views
         public WeatherView(WeatherViewModel viewmodel)
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
 
             this.BindingContext = _viewmodel = viewmodel;
-        }
 
-        /// <summary>
-        /// Show Event
-        /// </summary>
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            // Create Event on showing view
-            _viewmodel.OnViewActions += _viewmodel_OnViewActions;
-
-            // Load infos
-            _ = _viewmodel.LoadDailyWeather();
-
-            // Call Timer
-            _viewmodel.Timer();
-        }
-
-        /// <summary>
-        /// Events fired from ViewModel to View Processing
-        /// </summary>
-        /// <param name="action">Action Type</param>
-        /// <param name="response">Object to come with</param>
-        private void _viewmodel_OnViewActions(ViewActions action, object response = null)
-        {
-            switch (action)
-            {
-                case ViewActions.Loading:
-                    // Loading
-                    if (!_viewmodel.IsBusy)
-                        HideLoading();
-                    else
-                        ShowLoading(response as string);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Close Event
-        /// </summary>
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            // Remove Event from memory on closing view
-            _viewmodel.OnViewActions -= _viewmodel_OnViewActions;
-        }
-
-        /// <summary>
-        /// Get item info tapped
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void WeatherForecastList_ItemTapped(System.Object sender, Xamarin.Forms.ItemTappedEventArgs e)
-        {
-            CustomDailyInfos item = e.Item as CustomDailyInfos;
-
-            await Animation(item);
-
+            // Animation Event fired from viewmodel
+            _viewmodel.OnFireAnimation += async(info) =>
+             {
+                 await Animation(info);
+             };
         }
 
         /// <summary>
@@ -106,6 +49,7 @@ namespace Core.WeatherApp.Views
             weatherInfoPanel.RotationX = 0;
             await weatherInfoPanel.RotateXTo(180, 350, Easing.SpringIn);
 
+            // Call viewmodel  for infopanel refresh
             _viewmodel.SetInfoPanel(item);
 
             await weatherInfoPanel.RotateXTo(360, 350, Easing.SpringOut);
@@ -113,37 +57,6 @@ namespace Core.WeatherApp.Views
             {
                 weatherInfoPanel.HasShadow = true;
             }
-        }
-
-        /// <summary>
-        /// Show Loading view
-        /// </summary>
-        /// <param name="LoadMessage"></param>
-        public void ShowLoading(string LoadMessage)
-        {
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                _loadingView = new LoadingView(LoadMessage);
-                await Navigation.PushPopupAsync(_loadingView);
-            });
-        }
-
-        /// <summary>
-        /// Close Loading view
-        /// </summary>
-        public void HideLoading()
-        {
-            Device.BeginInvokeOnMainThread(async () => await Navigation.RemovePopupPageAsync(_loadingView));
-        }
-
-        /// <summary>
-        /// Returns Info Panel to current date
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void TapGestureRecognizer_Tapped(System.Object sender, System.EventArgs e)
-        {
-            await Animation(_viewmodel.OriginalDailyInfo);
         }
     }
 }

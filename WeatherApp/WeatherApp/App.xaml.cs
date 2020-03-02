@@ -7,6 +7,8 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter.Distribute;
 using Core.WeatherApp.Helpers;
+using Core.WeatherApp.Services.Navigation;
+using Core.WeatherApp.ViewModels;
 
 namespace Core.WeatherApp
 {
@@ -21,7 +23,9 @@ namespace Core.WeatherApp
         {
             InitializeComponent();
 
-            MainPage = ServiceProvider.GetService<WeatherView>();
+            // Start page
+            var navigationService = ServiceProvider.GetService<INavigationService<WeatherViewModel>>();
+            navigationService.InitializeAsync();
         }
 
         protected override void OnStart()

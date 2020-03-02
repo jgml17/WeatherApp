@@ -1,5 +1,6 @@
 ﻿using Core.WeatherApp.Services.RequestProvider;
 using Core.WeatherApp.Services.Weather;
+using Core.WeatherApp.ViewModels;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -10,19 +11,21 @@ namespace NUnitTestWeatherApp
     public class WeatherServiceTests
     {
         private WeatherService service;
+        //private WeatherViewModel viewModel;
 
         [SetUp]
         public void Setup()
         {
             service = new WeatherService(new RequestProvider(), null);
+            //viewModel = new WeatherViewModel(service, null, null);
         }
 
         /// <summary>
-        /// GetLocalWeatherOK Test
+        /// GetLocalWeather Service OK Test
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task GetLocalWeatherOK()
+        public async Task GetLocalWeatherServiceOK()
         {
             try
             {
@@ -38,8 +41,11 @@ namespace NUnitTestWeatherApp
             }
             catch (Exception ex)
             {
-                // ERROR
-                Assert.Fail("ERROR {0}", ex.Message);
+                if (ex != ex as SuccessException)
+                {
+                    // ERROR
+                    Assert.Fail("ERROR {0}", ex.Message);
+                }
             }
         }
     }

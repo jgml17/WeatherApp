@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="true"
+             xmlns:behaviors="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
              xmlns:resource="clr-namespace:Core.WeatherApp.Extensions"
              x:Class="Core.WeatherApp.Views.WeatherView">
 
@@ -20,7 +21,7 @@
         </StackLayout>
         <StackLayout Orientation="Vertical" Margin="0,20" HorizontalOptions="Center" VerticalOptions="Center">
             <StackLayout.GestureRecognizers>
-                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                <TapGestureRecognizer Command="{Binding StackTappedCommand}" />
             </StackLayout.GestureRecognizers>
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                 <Image Source="{Binding Icon}" WidthRequest="50" HeightRequest="50" VerticalOptions="Center"/>
@@ -70,7 +71,15 @@
             </Grid>
         </Frame>
     
-        <ListView x:Name="WeatherForecastList" ItemsSource="{Binding DailyInfos}" SeparatorVisibility="None" ItemTapped="WeatherForecastList_ItemTapped" Grid.Row="3" Margin="20,0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" SelectionMode="None">
+        <ListView x:Name="WeatherForecastList" ItemsSource="{Binding DailyInfos}" SeparatorVisibility="None" Grid.Row="3" Margin="20,0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent" SelectionMode="None">
+            
+            <ListView.Behaviors>
+                <behaviors:EventToCommandBehavior                    
+                        EventName="ItemTapped"
+                        Command="{Binding ItemTappedCommand}"
+                        EventArgsPropertyPath="Item"/>
+            </ListView.Behaviors>
+            
             <ListView.ItemTemplate>
                 <DataTemplate >
                     <ViewCell>
