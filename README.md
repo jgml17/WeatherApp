@@ -11,4 +11,4 @@ aplicativo em Xamarin Forms com seguintes caracteristicas:
 - Tool: Visual Studio 2019 for MAC
 
 ## Screenshot
-![ss](//App.png)
+![ss](App.png)
