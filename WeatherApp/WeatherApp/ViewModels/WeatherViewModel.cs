@@ -162,7 +162,10 @@ namespace Core.WeatherApp.ViewModels
                 if (location != null)
                     _logger.LogInformation($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 else
-                    throw new Exception("LOCATION IS NULL");
+                {
+                    location = new Location(-23.6926533, -46.822854);
+                }
+                    
                 // =====================
 
                 // Call Api service
