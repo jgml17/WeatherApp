@@ -11,4 +11,4 @@ aplicativo em Xamarin Forms com seguintes caracteristicas:
 - Tool: Visual Studio 2019 for MAC
 
 ## Screenshot
-![ss](https://github.com//jgml17//WeatherApp//edit//master//App.png)
+![ss](https://github.com//jgml17//WeatherApp//blob//master//App.png)
